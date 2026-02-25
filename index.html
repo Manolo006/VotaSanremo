@@ -1,31 +1,251 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
-    <title>Voting Application</title>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js"></script>
-    <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyD5lQYuX-lCm2Ck3D-JHJ_67G_Tz-L47HI",
-            messagingSenderId: "766904786401",
-            appId: "1:766904786401:web:00c2b9d223e9bec41906a0"
-        };
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Votazioni Sanremo</title>
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        // Initialize messaging
-        const messaging = firebase.messaging();
+<style>
 
-        // Function to handle background messages
-        messaging.onBackgroundMessage((payload) => {
-            console.log('Received background message ', payload);
-            // Customize notification here
-        });
-    </script>
+:root{
+  --sanremo-blue:#0B3D91;
+  --sanremo-pink:#E91E63;
+  --sanremo-gold:#FFD700;
+  --fantasanremo-purple:#6A0DAD;
+  --bg:#0f0f1a;
+  --card:#1b1b2b;
+}
+
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,var(--sanremo-blue),var(--fantasanremo-purple));
+  color:white;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.container{
+  width:95%;
+  max-width:500px;
+}
+
+.card{
+  background:var(--card);
+  padding:20px;
+  border-radius:15px;
+  margin-bottom:15px;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+h1{
+  text-align:center;
+  color:var(--sanremo-gold);
+}
+
+label{
+  display:block;
+  font-weight:bold;
+  margin-bottom:5px;
+}
+
+select{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+  font-size:16px;
+  box-sizing:border-box;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:10px;
+  margin-top:15px;
+  font-size:18px;
+  font-weight:bold;
+  background:linear-gradient(90deg,var(--sanremo-pink),var(--sanremo-gold));
+  color:black;
+  cursor:pointer;
+  box-sizing:border-box;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+.success{
+  text-align:center;
+  color:#00ffcc;
+  margin-top:10px;
+  font-weight:bold;
+}
+
+.error{
+  text-align:center;
+  color:#ff4444;
+  margin-top:10px;
+  font-weight:bold;
+}
+
+</style>
 </head>
 <body>
-    <h1>Welcome to the Voting Application</h1>
-    <p>Please cast your vote!</p>
+
+<div class="container">
+
+<h1>🎵 Vota Sanremo 🎵</h1>
+
+<div class="card">
+<label>Artista</label>
+<select id="artist">
+<option value="">-- Seleziona un artista --</option>
+<option value="Annalisa">Annalisa</option>
+<option value="Geolier">Geolier</option>
+<option value="Angelina Mango">Angelina Mango</option>
+<option value="Mahmood">Mahmood</option>
+<option value="Irama">Irama</option>
+</select>
+</div>
+
+<div class="card">
+<label>Outfit</label>
+<select id="outfit"></select>
+</div>
+
+<div class="card">
+<label>Esibizione</label>
+<select id="performance"></select>
+</div>
+
+<div class="card">
+<label>Canzone</label>
+<select id="song"></select>
+</div>
+
+<button onclick="submitVote()">INVIA VOTO</button>
+
+<div class="success" id="success"></div>
+<div class="error" id="error"></div>
+
+</div>
+
+<script type="module">
+
+// =======================
+// CREA LISTA VOTI
+// =======================
+
+function generateVotes(){
+
+    let votes = []
+
+    for(let i=1;i<=10;i++){ 
+
+        votes.push(i+"--")
+        votes.push(i+"-")
+        votes.push(i)
+        votes.push(i+"+")
+        votes.push(i+"++")
+
+        if(i<10)
+        votes.push(i+".5")
+
+    }
+
+    return votes
+}
+
+function populateSelect(id){
+
+    const select = document.getElementById(id)
+    const votes = generateVotes()
+
+    votes.forEach(v=>{
+        let option = document.createElement("option")
+        option.value = v
+        option.textContent = v
+        select.appendChild(option)
+    })
+}
+
+populateSelect("outfit")
+populateSelect("performance")
+populateSelect("song")
+
+// =======================
+// FIREBASE CONFIG
+// =======================
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD5lQYuX-lCm2Ck3D-JHJ_67G_Tz-L47HI",
+  authDomain: "votesanremo.firebaseapp.com",
+  databaseURL: "https://votesanremo-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "votesanremo",
+  storageBucket: "votesanremo.firebasestorage.app",
+  messagingSenderId: "766904786401",
+  appId: "1:766904786401:web:00c2b9d223e9bec41906a0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// =======================
+// INVIO VOTO
+// =======================
+
+async function submitVote(){
+
+    const successDiv = document.getElementById("success");
+    const errorDiv = document.getElementById("error");
+    
+    successDiv.innerText = "";
+    errorDiv.innerText = "";
+
+    const artist = document.getElementById("artist").value
+    const outfit = document.getElementById("outfit").value
+    const performance = document.getElementById("performance").value
+    const song = document.getElementById("song").value
+
+    if(!artist || !outfit || !performance || !song) {
+        errorDiv.innerText = "⚠️ Per favore compila tutti i campi!";
+        return;
+    }
+
+    try {
+
+        await push(ref(db, "votes"), {
+            artist: artist,
+            outfit: outfit,
+            performance: performance,
+            song: song,
+            timestamp: new Date().toISOString()
+        });
+
+        successDiv.innerText = "✅ Voto inviato con successo!";
+        
+        document.getElementById("artist").value = "";
+        document.getElementById("outfit").value = "";
+        document.getElementById("performance").value = "";
+        document.getElementById("song").value = "";
+
+    } catch (error) {
+        console.error("Errore:", error);
+        errorDiv.innerText = "❌ Errore nell'invio del voto. Riprova!";
+    }
+}
+
+window.submitVote = submitVote
+
+</script>
+
 </body>
 </html>
