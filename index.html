@@ -3,184 +3,208 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Votazioni Sanremo</title>
+<title>Votazioni Sanremo 2026</title>
 
 <style>
 
 :root{
-  --sanremo-blue:#0B3D91;
-  --sanremo-pink:#E91E63;
-  --sanremo-gold:#FFD700;
-  --fantasanremo-purple:#6A0DAD;
-  --bg:#0f0f1a;
-  --card:#1b1b2b;
+  --sanremo-blu: #002776;
+  --sanremo-blu-light: #0039A6;
+  --sanremo-gold: #FFD700;
+  --white: #FFFFFF;
+  --table-bg: #1a1a30;
 }
 
 body{
   margin:0;
   font-family:Arial, sans-serif;
-  background:linear-gradient(135deg,var(--sanremo-blue),var(--fantasanremo-purple));
-  color:white;
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-.container{
-  width:95%;
-  max-width:500px;
-}
-
-.card{
-  background:var(--card);
+  background: linear-gradient(135deg, var(--sanremo-blu), var(--sanremo-blu-light));
+  color: var(--white);
   padding:20px;
-  border-radius:15px;
-  margin-bottom:15px;
-  box-shadow:0 0 20px rgba(0,0,0,0.5);
 }
 
 h1{
   text-align:center;
-  color:var(--sanremo-gold);
+  color: var(--sanremo-gold);
+  font-size: 2rem;
+  margin-bottom:20px;
+  text-shadow: 0 0 12px rgba(255,215,0,0.8);
 }
 
-label{
-  display:block;
-  font-weight:bold;
-  margin-bottom:5px;
+.table-container{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background: var(--table-bg);
+  border-radius:12px;
+  overflow:hidden;
+}
+
+th, td{
+  padding:10px;
+  text-align:center;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+th{
+  background: rgba(0,0,60,0.6);
+  color: var(--sanremo-gold);
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+tr:hover{
+  background: rgba(255,255,255,0.05);
 }
 
 select{
   width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:8px;
-  border:none;
-  font-size:16px;
-  box-sizing:border-box;
+  padding:6px;
+  border-radius:6px;
+  border:1px solid var(--sanremo-gold);
+  background: var(--sanremo-blu-light);
+  color: var(--white);
+  font-weight:bold;
+}
+
+select option{
+  color:#000;
 }
 
 button{
+  margin-top:25px;
   width:100%;
   padding:15px;
   border:none;
   border-radius:10px;
-  margin-top:15px;
   font-size:18px;
   font-weight:bold;
-  background:linear-gradient(90deg,var(--sanremo-pink),var(--sanremo-gold));
-  color:black;
+  background: var(--sanremo-gold);
+  color: var(--sanremo-blu);
   cursor:pointer;
-  box-sizing:border-box;
+  transition:0.3s;
 }
 
 button:hover{
-  opacity:0.9;
+  background: var(--white);
+  color: var(--sanremo-blu);
+  transform: scale(1.03);
 }
 
-.success{
+.message{
   text-align:center;
-  color:#00ffcc;
-  margin-top:10px;
+  margin-top:15px;
   font-weight:bold;
 }
 
-.error{
-  text-align:center;
-  color:#ff4444;
-  margin-top:10px;
-  font-weight:bold;
-}
+.success{ color:#00ffcc; }
+.error{ color:#ff4444; }
 
 </style>
 </head>
 <body>
 
-<div class="container">
+<h1>🎵 Votazioni Sanremo 2026 🎵</h1>
 
-<h1>🎵 Vota Sanremo 🎵</h1>
-
-<div class="card">
-<label>Artista</label>
-<select id="artist">
-<option value="">-- Seleziona un artista --</option>
-<option value="Annalisa">Annalisa</option>
-<option value="Geolier">Geolier</option>
-<option value="Angelina Mango">Angelina Mango</option>
-<option value="Mahmood">Mahmood</option>
-<option value="Irama">Irama</option>
-</select>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Artista</th>
+<th>Outfit</th>
+<th>Esibizione</th>
+<th>Canzone</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
 </div>
 
-<div class="card">
-<label>Outfit</label>
-<select id="outfit"></select>
-</div>
+<button onclick="submitVotes()">INVIA TUTTI I VOTI</button>
 
-<div class="card">
-<label>Esibizione</label>
-<select id="performance"></select>
-</div>
-
-<div class="card">
-<label>Canzone</label>
-<select id="song"></select>
-</div>
-
-<button onclick="submitVote()">INVIA VOTO</button>
-
-<div class="success" id="success"></div>
-<div class="error" id="error"></div>
-
-</div>
+<div id="message" class="message"></div>
 
 <script type="module">
 
-// =======================
-// CREA LISTA VOTI
-// =======================
+// ================= ARTISTI 2026 =================
+
+const artists = [
+"LDA & AKA 7EVEN",
+"DITONELLAPIAGA",
+"BAMBOLE DI PEZZA",
+"LEO GASSMANN",
+"SAL DA VINCI",
+"J-AX",
+"DARGEN D'AMICO",
+"ARISA",
+"SAMURAI JAY",
+"SERENA BRANCALE",
+"EDDIE BROCK",
+"ELETTRA LAMBORGHINI",
+"FEDEZ & MASINI",
+"MARIA ANTONIETTA & COLOMBRE",
+"SAYF",
+"FULMINACCI",
+"LEVANTE",
+"ERMAL META",
+"PATTY PRAVO",
+"MALIKA AYANE",
+"MICHELE BRAVI",
+"LUCHÈ",
+"TOMMASO PARADISO",
+"NAYT",
+"FRANCESCO RENGA",
+"ENRICO NIGIOTTI",
+"MARA SATTEI",
+"CHIELLO",
+"RAF",
+"TREDICI PIETRO"
+]
+
+// ================= GENERA VOTI =================
 
 function generateVotes(){
-
-    let votes = []
-
-    for(let i=1;i<=10;i++){ 
-
-        votes.push(i+"--")
-        votes.push(i+"-")
-        votes.push(i)
-        votes.push(i+"+")
-        votes.push(i+"++")
-
-        if(i<10)
-        votes.push(i+".5")
-
+    let votes=[]
+    for(let i=1;i<=10;i++){
+        votes.push(i+"--", i+"-", i, i+"+", i+"++")
+        if(i<10) votes.push(i+".5")
     }
-
     return votes
 }
 
-function populateSelect(id){
+const votesList = generateVotes()
 
-    const select = document.getElementById(id)
-    const votes = generateVotes()
+// ================= CREA TABELLA =================
 
-    votes.forEach(v=>{
-        let option = document.createElement("option")
-        option.value = v
-        option.textContent = v
-        select.appendChild(option)
+const tableBody = document.getElementById("tableBody")
+
+artists.forEach(artist=>{
+    const safeId = artist.replace(/[^a-zA-Z0-9]/g,"_")
+
+    const row = document.createElement("tr")
+
+    row.innerHTML = `
+        <td><b>${artist}</b></td>
+        <td>${createSelect(safeId,"outfit")}</td>
+        <td>${createSelect(safeId,"performance")}</td>
+        <td>${createSelect(safeId,"song")}</td>
+    `
+
+    tableBody.appendChild(row)
+})
+
+function createSelect(id,type){
+    let options = '<option value="">-</option>'
+    votesList.forEach(v=>{
+        options += `<option value="${v}">${v}</option>`
     })
+    return `<select id="${id}-${type}">${options}</select>`
 }
 
-populateSelect("outfit")
-populateSelect("performance")
-populateSelect("song")
-
-// =======================
-// FIREBASE CONFIG
-// =======================
+// ================= FIREBASE =================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -198,52 +222,55 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// =======================
-// INVIO VOTO
-// =======================
+// ================= INVIO =================
 
-async function submitVote(){
+async function submitVotes(){
 
-    const successDiv = document.getElementById("success");
-    const errorDiv = document.getElementById("error");
-    
-    successDiv.innerText = "";
-    errorDiv.innerText = "";
+    const message = document.getElementById("message")
+    message.className="message"
+    message.innerText=""
 
-    const artist = document.getElementById("artist").value
-    const outfit = document.getElementById("outfit").value
-    const performance = document.getElementById("performance").value
-    const song = document.getElementById("song").value
+    let votesData = []
 
-    if(!artist || !outfit || !performance || !song) {
-        errorDiv.innerText = "⚠️ Per favore compila tutti i campi!";
-        return;
+    artists.forEach(artist=>{
+        const safeId = artist.replace(/[^a-zA-Z0-9]/g,"_")
+
+        const outfit = document.getElementById(`${safeId}-outfit`).value
+        const performance = document.getElementById(`${safeId}-performance`).value
+        const song = document.getElementById(`${safeId}-song`).value
+
+        if(outfit || performance || song){
+            votesData.push({
+                artist,
+                outfit,
+                performance,
+                song
+            })
+        }
+    })
+
+    if(votesData.length === 0){
+        message.classList.add("error")
+        message.innerText="⚠️ Inserisci almeno un voto!"
+        return
     }
 
-    try {
-
-        await push(ref(db, "votes"), {
-            artist: artist,
-            outfit: outfit,
-            performance: performance,
-            song: song,
+    try{
+        await push(ref(db,"votes"),{
+            votes: votesData,
             timestamp: new Date().toISOString()
-        });
+        })
 
-        successDiv.innerText = "✅ Voto inviato con successo!";
-        
-        document.getElementById("artist").value = "";
-        document.getElementById("outfit").value = "";
-        document.getElementById("performance").value = "";
-        document.getElementById("song").value = "";
-
-    } catch (error) {
-        console.error("Errore:", error);
-        errorDiv.innerText = "❌ Errore nell'invio del voto. Riprova!";
+        message.classList.add("success")
+        message.innerText="✅ Voti inviati con successo!"
+    }catch(err){
+        message.classList.add("error")
+        message.innerText="❌ Errore durante l'invio!"
     }
+
 }
 
-window.submitVote = submitVote
+window.submitVotes = submitVotes
 
 </script>
 
