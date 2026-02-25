@@ -6,24 +6,25 @@
 <title>Votazioni Sanremo</title>
 
 <style>
+
 :root{
-  --blue:#0B3D91;
-  --pink:#E91E63;
-  --gold:#FFD700;
-  --purple:#6A0DAD;
-  --dark:#111122;
-  --card:#1c1c2e;
+  --sanremo-blue:#0B3D91;
+  --sanremo-pink:#E91E63;
+  --sanremo-gold:#FFD700;
+  --fantasanremo-purple:#6A0DAD;
+  --bg:#0f0f1a;
+  --card:#1b1b2b;
 }
 
 body{
   margin:0;
   font-family:Arial, sans-serif;
-  background:linear-gradient(135deg,var(--blue),var(--purple));
+  background:linear-gradient(135deg,var(--sanremo-blue),var(--fantasanremo-purple));
   color:white;
+  min-height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
-  min-height:100vh;
 }
 
 .container{
@@ -31,26 +32,33 @@ body{
   max-width:500px;
 }
 
-h1{
-  text-align:center;
-  color:var(--gold);
-}
-
 .card{
   background:var(--card);
   padding:20px;
-  margin-bottom:15px;
   border-radius:15px;
-  box-shadow:0 0 20px rgba(0,0,0,0.4);
+  margin-bottom:15px;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+h1{
+  text-align:center;
+  color:var(--sanremo-gold);
+}
+
+label{
+  display:block;
+  font-weight:bold;
+  margin-bottom:5px;
 }
 
 select{
   width:100%;
   padding:12px;
-  margin-top:8px;
+  margin-top:10px;
   border-radius:8px;
   border:none;
   font-size:16px;
+  box-sizing:border-box;
 }
 
 button{
@@ -58,33 +66,50 @@ button{
   padding:15px;
   border:none;
   border-radius:10px;
+  margin-top:15px;
   font-size:18px;
   font-weight:bold;
-  background:linear-gradient(90deg,var(--pink),var(--gold));
+  background:linear-gradient(90deg,var(--sanremo-pink),var(--sanremo-gold));
   color:black;
   cursor:pointer;
+  box-sizing:border-box;
+}
+
+button:hover{
+  opacity:0.9;
 }
 
 .success{
   text-align:center;
-  margin-top:10px;
   color:#00ffcc;
+  margin-top:10px;
+  font-weight:bold;
 }
+
+.error{
+  text-align:center;
+  color:#ff4444;
+  margin-top:10px;
+  font-weight:bold;
+}
+
 </style>
 </head>
 <body>
 
 <div class="container">
-<h1>Vota Sanremo</h1>
+
+<h1>🎵 Vota Sanremo 🎵</h1>
 
 <div class="card">
 <label>Artista</label>
 <select id="artist">
-<option>Annalisa</option>
-<option>Geolier</option>
-<option>Angelina Mango</option>
-<option>Mahmood</option>
-<option>Irama</option>
+<option value="">-- Seleziona un artista --</option>
+<option value="Annalisa">Annalisa</option>
+<option value="Geolier">Geolier</option>
+<option value="Angelina Mango">Angelina Mango</option>
+<option value="Mahmood">Mahmood</option>
+<option value="Irama">Irama</option>
 </select>
 </div>
 
@@ -104,71 +129,125 @@ button{
 </div>
 
 <button onclick="submitVote()">INVIA VOTO</button>
+
 <div class="success" id="success"></div>
+<div class="error" id="error"></div>
 
 </div>
 
 <script type="module">
 
+// =======================
+// CREA LISTA VOTI
+// =======================
+
 function generateVotes(){
+
     let votes = []
+
     for(let i=1;i<=10;i++){
+
         votes.push(i+"--")
         votes.push(i+"-")
         votes.push(i)
         votes.push(i+"+")
         votes.push(i+"++")
-        if(i<10) votes.push(i+".5")
+
+        if(i<10)
+        votes.push(i+".5")
+
     }
+
     return votes
+
 }
 
-function populate(id){
+function populateSelect(id){
+
     const select = document.getElementById(id)
-    generateVotes().forEach(v=>{
-        let option=document.createElement("option")
-        option.value=v
-        option.textContent=v
+    const votes = generateVotes()
+
+    votes.forEach(v=>{
+        let option = document.createElement("option")
+        option.value = v
+        option.textContent = v
         select.appendChild(option)
     })
+
 }
 
-populate("outfit")
-populate("performance")
-populate("song")
+populateSelect("outfit")
+populateSelect("performance")
+populateSelect("song")
 
-// FIREBASE
+
+// =======================
+// FIREBASE CONFIG
+// =======================
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "INSERISCI",
-  authDomain: "INSERISCI",
-  projectId: "INSERISCI",
-  storageBucket: "INSERISCI",
-  messagingSenderId: "INSERISCI",
-  appId: "INSERISCI"
+
+  apiKey: "AIzaSyCzxV_-INSERISCI_TUO_API_KEY",
+  authDomain: "votesanremo.firebaseapp.com",
+  databaseURL: "https://votesanremo-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "votesanremo",
+  storageBucket: "votesanremo.appspot.com",
+  messagingSenderId: "INSERISCI_SENDER_ID",
+  appId: "INSERISCI_APP_ID"
+
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = getDatabase(app);
+
+
+// =======================
+// INVIO VOTO
+// =======================
 
 async function submitVote(){
+
+    const successDiv = document.getElementById("success");
+    const errorDiv = document.getElementById("error");
+    
+    successDiv.innerText = "";
+    errorDiv.innerText = "";
 
     const artist = document.getElementById("artist").value
     const outfit = document.getElementById("outfit").value
     const performance = document.getElementById("performance").value
     const song = document.getElementById("song").value
 
-    await addDoc(collection(db,"votes"),{
-        artist,
-        outfit,
-        performance,
-        song,
-        timestamp: serverTimestamp()
-    })
+    if(!artist || !outfit || !performance || !song) {
+        errorDiv.innerText = "⚠️ Per favore compila tutti i campi!";
+        return;
+    }
 
-    document.getElementById("success").innerText="Voto inviato!"
+    try {
+
+        await push(ref(db, "votes"), {
+            artist: artist,
+            outfit: outfit,
+            performance: performance,
+            song: song,
+            timestamp: new Date().toISOString()
+        });
+
+        successDiv.innerText = "✅ Voto inviato con successo!";
+        
+        document.getElementById("artist").value = "";
+        document.getElementById("outfit").value = "";
+        document.getElementById("performance").value = "";
+        document.getElementById("song").value = "";
+
+    } catch (error) {
+        console.error("Errore:", error);
+        errorDiv.innerText = "❌ Errore nell'invio del voto. Riprova!";
+    }
+
 }
 
 window.submitVote = submitVote
