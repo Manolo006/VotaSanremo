@@ -145,7 +145,7 @@ function generateVotes(){
 
     let votes = []
 
-    for(let i=1;i<=10;i++){
+    for(let i=1;i<=10;i++){ 
 
         votes.push(i+"--")
         votes.push(i+"-")
@@ -159,7 +159,6 @@ function generateVotes(){
     }
 
     return votes
-
 }
 
 function populateSelect(id){
@@ -173,13 +172,11 @@ function populateSelect(id){
         option.textContent = v
         select.appendChild(option)
     })
-
 }
 
 populateSelect("outfit")
 populateSelect("performance")
 populateSelect("song")
-
 
 // =======================
 // FIREBASE CONFIG
@@ -189,20 +186,17 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
-
-  apiKey: "AIzaSyCzxV_-INSERISCI_TUO_API_KEY",
+  apiKey: "AIzaSyD5lQYuX-lCm2Ck3D-JHJ_67G_Tz-L47HI",
   authDomain: "votesanremo.firebaseapp.com",
   databaseURL: "https://votesanremo-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "votesanremo",
-  storageBucket: "votesanremo.appspot.com",
-  messagingSenderId: "INSERISCI_SENDER_ID",
-  appId: "INSERISCI_APP_ID"
-
+  storageBucket: "votesanremo.firebasestorage.app",
+  messagingSenderId: "766904786401",
+  appId: "1:766904786401:web:00c2b9d223e9bec41906a0"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-
 
 // =======================
 // INVIO VOTO
@@ -247,7 +241,6 @@ async function submitVote(){
         console.error("Errore:", error);
         errorDiv.innerText = "❌ Errore nell'invio del voto. Riprova!";
     }
-
 }
 
 window.submitVote = submitVote
@@ -256,29 +249,3 @@ window.submitVote = submitVote
 
 </body>
 </html>
-
-
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyD5lQYuX-lCm2Ck3D-JHJ_67G_Tz-L47HI",
-    authDomain: "votesanremo.firebaseapp.com",
-    databaseURL: "https://votesanremo-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "votesanremo",
-    storageBucket: "votesanremo.firebasestorage.app",
-    messagingSenderId: "766904786401",
-    appId: "1:766904786401:web:00c2b9d223e9bec41906a0",
-    measurementId: "G-D01V4Z8LQL"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
