@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Votazioni Sanremo</title>
+
+<style>
+
+:root{
+  --sanremo-blue:#0B3D91;
+  --sanremo-pink:#E91E63;
+  --sanremo-gold:#FFD700;
+  --fantasanremo-purple:#6A0DAD;
+  --bg:#0f0f1a;
+  --card:#1b1b2b;
+}
+
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,var(--sanremo-blue),var(--fantasanremo-purple));
+  color:white;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.container{
+  width:95%;
+  max-width:500px;
+}
+
+.card{
+  background:var(--card);
+  padding:20px;
+  border-radius:15px;
+  margin-bottom:15px;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+h1{
+  text-align:center;
+  color:var(--sanremo-gold);
+}
+
+select{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+  font-size:16px;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:10px;
+  margin-top:15px;
+  font-size:18px;
+  font-weight:bold;
+  background:linear-gradient(90deg,var(--sanremo-pink),var(--sanremo-gold));
+  color:black;
+  cursor:pointer;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+.success{
+  text-align:center;
+  color:#00ffcc;
+  margin-top:10px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>Vota Sanremo</h1>
+
+<div class="card">
+<label>Artista</label>
+<select id="artist">
+<option value="Annalisa">Annalisa</option>
+<option value="Geolier">Geolier</option>
+<option value="Angelina Mango">Angelina Mango</option>
+<option value="Mahmood">Mahmood</option>
+<option value="Irama">Irama</option>
+</select>
+</div>
+
+<div class="card">
+<label>Outfit</label>
+<select id="outfit"></select>
+</div>
+
+<div class="card">
+<label>Esibizione</label>
+<select id="performance"></select>
+</div>
+
+<div class="card">
+<label>Canzone</label>
+<select id="song"></select>
+</div>
+
+<button onclick="submitVote()">INVIA VOTO</button>
+
+<div class="success" id="success"></div>
+
+</div>
+
+<script type="module">
+
+// =======================
+// CREA LISTA VOTI
+// =======================
+
+function generateVotes(){
+
+    let votes = []
+
+    for(let i=1;i<=10;i++){
+
+        votes.push(i+"--")
+        votes.push(i+"-")
+        votes.push(i)
+        votes.push(i+"+")
+        votes.push(i+"++")
+
+        if(i<10)
+        votes.push(i+".5")
+
+    }
+
+    return votes
+
+}
+
+function populateSelect(id){
+
+    const select = document.getElementById(id)
+    const votes = generateVotes()
+
+    votes.forEach(v=>{
+        let option = document.createElement("option")
+        option.value = v
+        option.textContent = v
+        select.appendChild(option)
+    })
+
+}
+
+populateSelect("outfit")
+populateSelect("performance")
+populateSelect("song")
+
+
+// =======================
+// FIREBASE CONFIG
+// =======================
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+
+  apiKey: "INSERISCI",
+  authDomain: "INSERISCI",
+  projectId: "INSERISCI",
+  storageBucket: "INSERISCI",
+  messagingSenderId: "INSERISCI",
+  appId: "INSERISCI"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+// =======================
+// INVIO VOTO
+// =======================
+
+async function submitVote(){
+
+    const artist = document.getElementById("artist").value
+    const outfit = document.getElementById("outfit").value
+    const performance = document.getElementById("performance").value
+    const song = document.getElementById("song").value
+
+    await addDoc(collection(db,"votes"),{
+
+        artist,
+        outfit,
+        performance,
+        song,
+        timestamp: serverTimestamp()
+
+    })
+
+    document.getElementById("success").innerText="Voto inviato!"
+
+}
+
+window.submitVote = submitVote
+
+</script>
+
+</body>
+</html>
