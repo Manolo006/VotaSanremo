@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanremo Voting Application</title>
+</head>
+<body>
+    <h1>Vote for Your Favorite Sanremo Artist!</h1>
+    <form action="/submit-vote" method="POST">
+        <label for="artist">Select your favorite artist:</label>
+        <select id="artist" name="artist">
+            <option value="artist1">Artist 1</option>
+            <option value="artist2">Artist 2</option>
+            <option value="artist3">Artist 3</option>
+            <!-- Add more artists as needed -->
+        </select>
+        <br>
+        <button type="submit">Vote</button>
+    </form>
+</body>
+</html>
