@@ -3,32 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Votazioni Sanremo 2026</title>
+<title>Votazioni FantaSanremo 2026</title>
 
 <style>
 
 :root{
-  --sanremo-blu: #002776;
-  --sanremo-blu-light: #0039A6;
-  --sanremo-gold: #FFD700;
-  --white: #FFFFFF;
-  --table-bg: #1a1a30;
+  --fanta-pink:#ff007f;
+  --fanta-purple:#7b00ff;
+  --fanta-blue:#00c3ff;
+  --dark:#0d001a;
+  --card:#1a0033;
+  --white:#ffffff;
 }
 
 body{
   margin:0;
-  font-family:Arial, sans-serif;
-  background: linear-gradient(135deg, var(--sanremo-blu), var(--sanremo-blu-light));
-  color: var(--white);
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg,var(--fanta-purple),var(--fanta-blue));
+  color:var(--white);
   padding:20px;
 }
 
 h1{
   text-align:center;
-  color: var(--sanremo-gold);
-  font-size: 2rem;
-  margin-bottom:20px;
-  text-shadow: 0 0 12px rgba(255,215,0,0.8);
+  font-size:2rem;
+  background: linear-gradient(90deg,var(--fanta-pink),var(--fanta-blue));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 20px rgba(255,0,127,0.6);
+  margin-bottom:25px;
 }
 
 .table-container{
@@ -38,40 +41,41 @@ h1{
 table{
   width:100%;
   border-collapse:collapse;
-  background: var(--table-bg);
-  border-radius:12px;
+  background:var(--card);
+  border-radius:15px;
   overflow:hidden;
-}
-
-th, td{
-  padding:10px;
-  text-align:center;
-  border-bottom: 1px solid rgba(255,255,255,0.15);
+  box-shadow:0 0 25px rgba(255,0,127,0.4);
 }
 
 th{
-  background: rgba(0,0,60,0.6);
-  color: var(--sanremo-gold);
-  text-transform: uppercase;
-  font-size: 0.9rem;
+  background: linear-gradient(90deg,var(--fanta-pink),var(--fanta-purple));
+  padding:12px;
+  font-size:0.9rem;
+  text-transform:uppercase;
+}
+
+td{
+  padding:10px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
 tr:hover{
-  background: rgba(255,255,255,0.05);
+  background:rgba(255,255,255,0.05);
 }
 
 select{
   width:100%;
   padding:6px;
-  border-radius:6px;
-  border:1px solid var(--sanremo-gold);
-  background: var(--sanremo-blu-light);
-  color: var(--white);
+  border-radius:8px;
+  border:2px solid var(--fanta-pink);
+  background:#2a004d;
+  color:white;
   font-weight:bold;
 }
 
-select option{
-  color:#000;
+select:focus{
+  outline:none;
+  box-shadow:0 0 10px var(--fanta-pink);
 }
 
 button{
@@ -79,19 +83,19 @@ button{
   width:100%;
   padding:15px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   font-size:18px;
   font-weight:bold;
-  background: var(--sanremo-gold);
-  color: var(--sanremo-blu);
+  background: linear-gradient(90deg,var(--fanta-pink),var(--fanta-blue));
+  color:white;
   cursor:pointer;
+  box-shadow:0 0 15px rgba(255,0,127,0.6);
   transition:0.3s;
 }
 
 button:hover{
-  background: var(--white);
-  color: var(--sanremo-blu);
-  transform: scale(1.03);
+  transform:scale(1.05);
+  box-shadow:0 0 25px rgba(0,195,255,0.9);
 }
 
 .message{
@@ -101,13 +105,13 @@ button:hover{
 }
 
 .success{ color:#00ffcc; }
-.error{ color:#ff4444; }
+.error{ color:#ff4d4d; }
 
 </style>
 </head>
 <body>
 
-<h1>🎵 Votazioni Sanremo 2026 🎵</h1>
+<h1>🎤 FantaSanremo 2026 – Vota gli Artisti 🎶</h1>
 
 <div class="table-container">
 <table>
@@ -128,8 +132,6 @@ button:hover{
 <div id="message" class="message"></div>
 
 <script type="module">
-
-// ================= ARTISTI 2026 =================
 
 const artists = [
 "LDA & AKA 7EVEN",
@@ -164,8 +166,6 @@ const artists = [
 "TREDICI PIETRO"
 ]
 
-// ================= GENERA VOTI =================
-
 function generateVotes(){
     let votes=[]
     for(let i=1;i<=10;i++){
@@ -176,14 +176,10 @@ function generateVotes(){
 }
 
 const votesList = generateVotes()
-
-// ================= CREA TABELLA =================
-
 const tableBody = document.getElementById("tableBody")
 
 artists.forEach(artist=>{
     const safeId = artist.replace(/[^a-zA-Z0-9]/g,"_")
-
     const row = document.createElement("tr")
 
     row.innerHTML = `
@@ -204,8 +200,6 @@ function createSelect(id,type){
     return `<select id="${id}-${type}">${options}</select>`
 }
 
-// ================= FIREBASE =================
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
@@ -221,8 +215,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-
-// ================= INVIO =================
 
 async function submitVotes(){
 
@@ -240,12 +232,7 @@ async function submitVotes(){
         const song = document.getElementById(`${safeId}-song`).value
 
         if(outfit || performance || song){
-            votesData.push({
-                artist,
-                outfit,
-                performance,
-                song
-            })
+            votesData.push({ artist, outfit, performance, song })
         }
     })
 
